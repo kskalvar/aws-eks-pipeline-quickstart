@@ -148,11 +148,11 @@ Before proceeding be sure you delete deployment,service codesuite-demo as instru
 script to fail.
 
 ### AWS ECR Console
-Select "eks-c-repos-*"
+Select ```eks-c-repos-*```
 Click on "Delete" Button
 
 ### AWS S3 Console
-Select "eks-codesuite-demo-pipeline-*-artifactbucket-*"
+Select ```eks-codesuite-demo-pipeline-*-artifactbucket-*```
 Click on "Delete" Button
 
 ### AWS CloudFormation
