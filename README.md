@@ -1,278 +1,129 @@
-AWS Elastic Kubernetes Service (EKS) Pipeline QuickStart  
+AWS Elastic Kubernetes Service (EKS) CI/CD Pipeline QuickStart  
 ===============================================
 
-This solution shows how to create an AWS EKS Cluster and deploy a simple web application with an external Load Balancer. This readme updates an article "Getting Started with Amazon EKS" referenced below and provides a more basic step by step process.  Unfortunately this is a pretty manual effort right now.
+This solution shows you how to create an AWS EKS Cluster CI/CD Pipeline and deploy a simple web application with an external Load Balancer. This readme updates an article "CodeSuite - Continuous Deployment Reference Architecture for Kubernetes" referenced below and provides a more basic step by step process.  
 
 Steps:  
   Create your Amazon EKS Service Role  
   Create your Amazon EKS Cluster VPC  
-  Create your Amazon EKS Cluster  
-  Launch and Configure Your Amazon EKS Worker Nodes  
-  Configure Your AWS EC2 Instance  
-  Configure kubectl on Your EC2 Instance  
-  Enable Worker Nodes to Join Your Cluster  
-  Deploy WebApp to Your Cluster  
-  Configure Kube Dashboard  
   Remove Your AWS EKS Cluster  
 
 
-To make this first cluster easy to deploy we'll use a docker image located in DockerHub at kskalvar/web.  This image is nothing more than a simple webapp that returns the current ip address of the container it's running in.  We'll create an external AWS Load Balancer and you should see a unique ip address as it is load balanced across containers.
-
-The project also includes the Dockerfile for those interested in the configuration of the actual application or to build your own and deploy using ECR.
-
-
-## Create your Amazon EKS Service Role
-
-Use the AWS Console to configure the EKS IAM Role.  This is a step by step process.
-
-### AWS IAM Dashboard
-Select Roles  
-
-Click on "Create role"  
-Select "AWS Service"  
-Choose the service that will use this role  
-```
-EKS
-```  
-Click on "Next: Permissions"  
-Click on "Next: Review"  
-Enter "Role Name"
-```
-eks-role
-```
-Click on "Create role"
-
-## Create your Amazon EKS Cluster VPC
-
-Use the AWS CloudFormation to configure the Cluster VPC.  This is a step by step process.
-
-### AWS CloudFormation Console
-Click on "Create Stack"  
-Select "Specify an Amazon S3 template URL"  
-```
-https://amazon-eks.s3-us-west-2.amazonaws.com/cloudformation/2019-01-09/amazon-eks-vpc-sample.yaml
-```
-Click on "Next"  
-```
-Stack Name: eks-vpc
-```
-Click on "Next"  
-Click on "Next"  
-Click on "Create"
-
-Wait for Status CREATE_COMPLETE before proceeding 
-
-
 ## Create your Amazon EKS Cluster
-
-Use the AWS Console to configure the EKS Cluster.  This is a step by step process and should take approximately 10 minutes.
-
-### AWS EKS Dashboard
-
-Locate "Amazon EKS" section in left-hand column
-Click on "Clusters"  
-
-Click on "Create cluster"  
+This assumes you already have a EKS Cluster up and running with kubectl configured.  Please see "AWS Elastic Kubernetes Service (EKS) Pipeline QuickStart" link below for setting up a cluster.    
 ```
-Cluster name: eks-cluster
-Kubernetes version:  1.11
-Role ARN: eks-role
-VPC: eks-vpc-VPC
-Subnets:  Should preselect all available
-Security groups: eks-vpc-ControlPlaneSecurityGroup-*
+https://github.com/kskalvar/aws-eks-pipeline-quickstart  
 ```
 
-Click on "Create"  
+## Checkout aws-kube-codesuite from the aws-samples github
 
-Wait for Status ACTIVE before proceeding
+You will need to ssh into the AWS EC2 Instance you created above.  This is a step by step process.  
 
-## Launch and Configure Your Amazon EKS Worker Nodes
-
-Use AWS CloudFormation to configure the Worker Nodes.  This is a step by step process.
-
-### AWS CloudFormation Console
-Click on "Create Stack"  
-Select "Specify an Amazon S3 template URL"  
+On the instance you have kubectl configured, checkout the codesuite repo from github.  
 ```
-https://amazon-eks.s3-us-west-2.amazonaws.com/cloudformation/2019-01-09/amazon-eks-nodegroup.yaml
-```
-Click on "Next"  
-```
-Stack Name: eks-nodegroup
-ClusterNamme: eks-cluster
-ClusterControlPlaneSecurityGroup: eks-vpc-ControlPlaneSecurityGroup-*
-NodeGroupName: eks-nodegroup
-NodeImageId: ami-0c24db5df6badc35a
-KeyName: <Your AWS KeyName>
-VpcId: eks-vpc-VPC
-Subnets: Subnet01, Subnet02, Subnet03
-```
-Click on "Next"  
-Click on "Next"  
-Select Check Box "I acknowledge that AWS CloudFormation might create IAM resources"  
-Click on "Create"
-
-Wait for Status CREATE_COMPLETE before proceeding  
-You should be able to see the additional nodes visible in AWS EC2 Console  
-
-Click on "Outputs" Tab Below
-```
-Copy NodeInstanceRole Value for use later
+git clone https://github.com/aws-samples/aws-kube-codesuite
 ```
 
-## Configure Your AWS EC2 Instance
-
-Use AWS Console to configure the EC2 Instance for kubectl.  This is a step by step process.
-
-### AWS EC2 Dashboard  
-
-Click on "Launch Instance"  
-Click on "Community AMIs"  
-Search community AMIs
+## Deploy the Application
+Deploy the nginx default container application to the EKS Cluster
 ```
-Amazon Linux AMI 2018.03.0 (HVM), SSD Volume Type (ami-0080e4c5bc078760e) 
-```  
-Click on "Select"
-
-Choose Instance Type
-```
-t2.micro
-```
-Click on "Next: Configure Instance Details"  
-Click on "Advanced Details
-```
-User data
-Select "As file"
-Click on "Choose File" and Select "cloud-init" from project cloud-deployment directory 
-```  
-Click on "Next: Add Storage"  
-Click on "Next" Add Tags"  
-Click on "Add Tag"
-```
-Key: Name
-Value: kubectl-console
-```
-Click on "Next: Configure Security Group"  
-Configure Security Group  
-Select "Select an existing security group"  
-Select "default"  
-Click on "Review and Launch"    
-Click on "Launch"
-
-## Configure kubectl on Your EC2 Instance
-
-You will need to ssh into the AWS EC2 Instance you created above.  This is a step by step process.
-
-### Check to insure cloud-init has completed
-
-See contents of "/tmp/install-eks-support" it should say "installation complete".
-
-
-### Configure AWS CLI
-
-aws configure
-```
-AWS Access Key ID []: <Your Access Key ID>
-AWS Secret Access Key []: <Your Secret Access Key>
-Default region name []: us-east-1
-```
-
-```
-NOTE:  There is a script in /home/ec2-user called "configure-kube-control".  You may run this script to automate the  
-       creation and population of environment variables in .kube/aws-auth-cm.yaml and .kube/control-kubeconfig.  It
-       uses the naming convention I specified in this HOW-TO.  So if you didn't use the naming convention it won't work.
-       If you do use the script then all you need to do is run "Test Cluster" and "Test Cluster Nodes" steps.
-```
-
-### control-kubeconfig
-Gather cluster name, endpoint, and certificate for use below
-```
-aws eks list-clusters                                                               
-aws eks describe-cluster --name eks-cluster --query cluster.endpoint                
-aws eks describe-cluster --name eks-cluster  --query cluster.certificateAuthority.data  
-```
-
-Copy the control-kubeconfig template from the github project
-```
-mkdir -p ~/.kube  
-cp ~/aws-eks-cluster-quickstart/kube-config/control-kubeconfig.txt ~/.kube/control-kubeconfig 
-```
-
-### Edit control-kubeconfig and replace with values above
-```
-<myendpoint>
-<mydata>
-<mycluster>
-```
-
-### Test Cluster
-Using kubectl test the cluster status
-```
-source ~/.bashrc # To insure you picked up the environment variables
-kubectl get svc 
-```
-
-## Enable Worker Nodes to Join Your Cluster
-You will need to ssh into the AWS EC2 Instance you created above. This is a step by step process.
-
-###  aws-auth-cm.yaml
-Copy the aws-auth-cm.yaml template from the github project
-```
-cp ~/aws-eks-cluster-quickstart/kube-config/aws-auth-cm.yaml.txt ~/.kube/aws-auth-cm.yaml
-```
-
-### Edit aws-auth-cm.yaml
-Replace <myarn> with NodeInstanceRole from output of CloudFormation script "eks-nodegroup"
-```
-<myarn>
-```
-
-### Test Cluster Nodes
-Use kubectl to test status of cluster nodes
-```
-kubectl apply -f ~/.kube/aws-auth-cm.yaml
-kubectl get nodes
-```
-Wait till you see all nodes appear in "STATUS Ready"
-
-
-## Deploy WebApp to Your Cluster
-
-You will need to ssh into the AWS EC2 Instance you created above. This is a step by step process.
-
-### Create Pod
-Use kubectl to create a single pod
-```
-kubectl run web --image=kskalvar/web --port=5000
-```
-
-### Scale Pod
-Use kubectl to scale pod
-```
-kubectl scale deployment web --replicas=3
-```
-
-### Show Pods Running
-Use kubectl to display pods
-```
-kubectl get pods --output wide
-```
-Wait till you see all pods appear in "STATUS Running"
-
-### Create Load Balancer
-Use kubectl to create AWS EC2 LoadBalancer
-```
-kubectl expose deployment web --port=80 --target-port=5000 --type="LoadBalancer"
+cd aws-kube-codesuite
+kubectl apply -f ./kube-manifests/deploy-first.yml
 ```
 
 ### Get AWS External Load Balancer Address
 Capture EXTERNAL-IP for use below
 ```
-kubectl get service web --output wide
+kubectl get svc codesuite-demo -o wide
 ```
-Wait till you see "EXTERNAL-IP ```*.<your account>.<region>.elb.amazon.com```" 
+Wait till you see "EXTERNAL-IP ```*.<region>.elb.amazon.com```" 
 
 ### Test from browser
+Using your client-side browser enter the following URL
+```
+http://<EXTERNAL-IP>
+```
+## Use AWS CloudFormation to Create the CI/CD Pipeline
+
+Please note, there is an issue with the CodeSuite Reference Architecture which allows it to only be built in the us-west-2 region currently.  The issue has been added to the github "Deploy Fails #12" but as of 2019-01-28 it has not been fixed.  I did identify a work-around which allows it to work in the us-east-1 region.
+
+### AWS CloudFormation Console
+Click on "Create Stack"  
+Select "Specify an Amazon S3 template URL"  
+```
+https://s3.amazonaws.com/998551034662-aws-eks-codesuite/aws-refarch-codesuite-kubernetes.yaml
+```
+Click on "Next"  
+```
+Stack name: eks-codesuite-demo
+The name of your EKS cluster: eks-cluster
+```
+Click on "Next"  
+Click on "Next"  
+Select Check Box "I acknowledge that AWS CloudFormation might create IAM resources with custom names"  
+Select Check Box "I acknowledge that AWS CloudFormation might require the following capability: CAPABILITY_AUTO_EXPAND"
+Click on "Create"
+
+
+## Give the Lambda execution role permissions in Amazon EKS cluster
+You will need to ssh into the AWS EC2 Instance you created above. This is a step by step process.
+
+
+### Configure configmap/aws-auth
+
+Add "rolearn" Lambda execution role
+```
+kubectl -n kube-system edit configmap/aws-auth
+```
+Replace "arn:aws:iam::*:role/eks-codesuite-demo-Pipeline-CodePipelineLambdaRole-*" below with "LambdaRoleArn" from output of CloudFormation script "eks-codesuite-demo-Pipeline-*"
+```
+apiVersion: v1
+data:
+  mapRoles: |
+    - rolearn: arn:aws:iam::*:role/eks-nodegroup-NodeInstanceRole-*
+      username: system:node:{{EC2PrivateDNSName}}
+      groups:
+        - system:bootstrappers
+        - system:nodes
+    - rolearn: arn:aws:iam::*:role/eks-codesuite-demo-Pipeline-CodePipelineLambdaRole-*
+      username: admin
+      groups:
+        - system:masters
+```
+
+## Test CI/CD Pipeline
+
+### Install Credential Helper
+git config --global credential.helper '!aws codecommit credential-helper $@'
+git config --global credential.UseHttpPath true
+
+### AWS CodeCommit Console
+Locate "eks-codesuite-demo" under "Repositories"
+Click on "HTTPS" under "Clone URL" 
+
+### Clone Repo and Update Code Base
+```
+git clone https://git-codecommit.us-east-1.amazonaws.com/v1/repos/eks-codesuite-demo
+cp aws-kube-codesuite/sample-app/* eks-codesuite-demo/
+```
+### Modify Dockerfile AWS_DEFAULT_REGION 
+```
+cd eks-codesuite-demo
+```
+edit Dockerfile
+```
+ENV AWS_DEFAULT_REGION us-east-1
+```
+### Push Changes to CodeCommit Repo
+```
+git add . && git commit -m "test CodeSuite" && git push origin master
+```
+
+### AWS CodePipeline Console
+Click on "eks-codesuite-demo-Pipeline-*-Pipeline-*" under Pipelines  
+You should be able to watch your codePipeline execute
+
+### Test Deployment from browser
 Using your client-side browser enter the following URL
 ```
 http://<EXTERNAL-IP>
@@ -281,60 +132,28 @@ http://<EXTERNAL-IP>
 ### Delete Deployment, Service
 Use kubectl to delete application
 ```
-kubectl delete deployment,service web
+kubectl delete deployment,service codesuite-demo
 ```
 
-## Configure Kube Dashboard
-
-You will need to ssh into the AWS EC2 Instance you created above and redirect port 8001.  This is a step by step process.
-
-### Connect to EC2 Instance redirecting port 8001 Locally
-```
-ssh -i key-pair.pem ec2-user@XX-XX-XX.compute-1.amazonaws.com -L 8001:localhost:8001
-```
-
-### configure-kube-dashboard
-
-```
-NOTE:  There is a script in /home/ec2-user called "configure-kube-dashboard".  You may run this script to automate the  
-       creation of environment variables and startup of kubectl proxy.
-```
-
-### Test from browser
-Using your client-side browser enter the following URL. The configure-kube-dashboard should also output the token required.
-```
-http://localhost:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/
-```
-
-## Remove Your AWS EKS Cluster
-Before proceeding be sure you delete deployment,service web as instructed above.  Failure to do so will cause cloudformation
+## Remove CI/CD Pipeline
+Before proceeding be sure you delete deployment,service codesuite-demo as instructed above.  Failure to do so will cause cloudformation
 script to fail.
 
+S3  codesuite-demo-pipeline-bvchgrte7e-artifactbucket-1ddhbbqms304g
+
+### AWS ECR Console
+Select "eks-c-repos-*"
+Click on "Delete" Button
+
+### AWS S3 Console
+Select "eks-codesuite-demo-pipeline-*-artifactbucket-*"
+Click on "Delete" Button
+
 ### AWS CloudFormation
-Delete "eks-nodegroup" Stack  
-Wait for "eks-nodegroup" to be deleted before proceeding
+Delete "eks-codesuite-demo" Stack  
+Wait for "eks-codesuite-demo" to be deleted before proceeding
 
-### AWS EKS
-Delete "eks-cluster"  
-Wait for cluster to be deleted before proceeding.  Really slow!  
 
-### AWS CloudFormation
-Delete "eks-vpc"  
-Wait for vpc to be deleted before proceeding
-
-### AWS EC2
-Delete "kubectl-console" Instance  
-Wait for instance to be deleted before proceeding
-
-### AWS IAM Roles
-Delete the following Roles:
-
-```
-eks-role  
-```
 ## References
-Getting Started with Amazon EKS  
-https://docs.aws.amazon.com/eks/latest/userguide/getting-started.html  
-
-Amazon EKS-Optimized AMI  
-https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-ami.html
+CodeSuite - Continuous Deployment Reference Architecture for Kubernetes  
+https://github.com/aws-samples/aws-kube-codesuite  
