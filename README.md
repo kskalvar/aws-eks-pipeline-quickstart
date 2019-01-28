@@ -128,7 +128,7 @@ git add . && git commit -m "test CodeSuite" && git push origin master
 ```
 
 ### AWS CodePipeline Console
-Click on "eks-codesuite-demo-Pipeline-*-Pipeline-*" under Pipelines  
+Click on ```eks-codesuite-demo-Pipeline-*-Pipeline-*``` under Pipelines  
 You should be able to watch your codePipeline execute
 
 ### Test Deployment from browser
