@@ -4,9 +4,13 @@ AWS Elastic Kubernetes Service (EKS) CI/CD Pipeline QuickStart
 This solution shows you how to create an AWS EKS Cluster CI/CD Pipeline and deploy a simple web application with an external Load Balancer. This readme updates an article "CodeSuite - Continuous Deployment Reference Architecture for Kubernetes" referenced below and provides a more basic step by step process.  
 
 Steps:  
-  Create your Amazon EKS Service Role  
-  Create your Amazon EKS Cluster VPC  
-  Remove Your AWS EKS Cluster  
+  Create your Amazon EKS Cluster  
+  Checkout aws-kube-codesuite from the aws-samples github  
+  Deploy the Initial Application  
+  Use AWS CloudFormation to Create the CI/CD Pipeline  
+  Give Lambda Execution Role Permissions in Amazon EKS Cluster  
+  Test CI/CD Pipeline  
+  Remove CI/CD Pipeline  
 
 
 ## Create your Amazon EKS Cluster
@@ -24,7 +28,7 @@ On the instance you have kubectl configured, checkout the codesuite repo from gi
 git clone https://github.com/aws-samples/aws-kube-codesuite
 ```
 
-## Deploy the Application
+## Deploy the Initial Application
 Deploy the nginx default container application to the EKS Cluster
 ```
 cd aws-kube-codesuite
@@ -61,17 +65,17 @@ The name of your EKS cluster: eks-cluster
 Click on "Next"  
 Click on "Next"  
 Select Check Box "I acknowledge that AWS CloudFormation might create IAM resources with custom names"  
-Select Check Box "I acknowledge that AWS CloudFormation might require the following capability: CAPABILITY_AUTO_EXPAND"
+Select Check Box "I acknowledge that AWS CloudFormation might require the following capability: CAPABILITY_AUTO_EXPAND"  
 Click on "Create"
 
 
-## Give the Lambda execution role permissions in Amazon EKS cluster
+## Give Lambda Execution Role Permissions in Amazon EKS Cluster
 You will need to ssh into the AWS EC2 Instance you created above. This is a step by step process.
 
 
 ### Configure configmap/aws-auth
 
-Add "rolearn" Lambda execution role
+Add "rolearn" Lambda execution role using kubectl
 ```
 kubectl -n kube-system edit configmap/aws-auth
 ```
@@ -92,6 +96,7 @@ data:
 ```
 
 ## Test CI/CD Pipeline
+You will need to ssh into the AWS EC2 Instance you created above. This is a step by step process.  
 
 ### Install Credential Helper
 git config --global credential.helper '!aws codecommit credential-helper $@'
@@ -102,11 +107,13 @@ Locate "eks-codesuite-demo" under "Repositories"
 Click on "HTTPS" under "Clone URL" 
 
 ### Clone Repo and Update Code Base
+Copy the sample-app to your new clone CodeCommit Repo
 ```
 git clone https://git-codecommit.us-east-1.amazonaws.com/v1/repos/eks-codesuite-demo
 cp aws-kube-codesuite/sample-app/* eks-codesuite-demo/
 ```
-### Modify Dockerfile AWS_DEFAULT_REGION 
+### Modify Dockerfile AWS_DEFAULT_REGION
+Dockerfile still references "us-west-2" so change to "us-east-1"
 ```
 cd eks-codesuite-demo
 ```
@@ -115,6 +122,7 @@ edit Dockerfile
 ENV AWS_DEFAULT_REGION us-east-1
 ```
 ### Push Changes to CodeCommit Repo
+Use git to push code changes to the repo
 ```
 git add . && git commit -m "test CodeSuite" && git push origin master
 ```
@@ -139,8 +147,6 @@ kubectl delete deployment,service codesuite-demo
 Before proceeding be sure you delete deployment,service codesuite-demo as instructed above.  Failure to do so will cause cloudformation
 script to fail.
 
-S3  codesuite-demo-pipeline-bvchgrte7e-artifactbucket-1ddhbbqms304g
-
 ### AWS ECR Console
 Select "eks-c-repos-*"
 Click on "Delete" Button
@@ -155,5 +161,8 @@ Wait for "eks-codesuite-demo" to be deleted before proceeding
 
 
 ## References
+AWS Elastic Kubernetes Service (EKS) QuickStart  
+https://github.com/kskalvar/aws-eks-cluster-quickstart
+
 CodeSuite - Continuous Deployment Reference Architecture for Kubernetes  
 https://github.com/aws-samples/aws-kube-codesuite  
