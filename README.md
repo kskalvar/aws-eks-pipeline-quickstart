@@ -49,7 +49,7 @@ http://<EXTERNAL-IP>
 ```
 ## Use AWS CloudFormation to Create the CI/CD Pipeline
 
-Please note, there is an issue with the CodeSuite Reference Architecture which allows it to only be built in the us-west-2 region currently.  The issue has been added to the github "Deploy Fails #12" but as of 2019-01-28 it has not been fixed.  I did identify a work-around which allows it to work in the us-east-1 region.
+Please note, there is an issue with the CodeSuite Reference Architecture which allows it to only be built in the us-west-2 region currently.  The issue has been added to the github Issues "Deploy Fails #12" but as of 2019-01-28 it has not been fixed.  I did identify a work-around which allows it to work in the us-east-1 region.  That work-around is incorporated in this README.md.
 
 ### AWS CloudFormation Console
 Click on "Create Stack"  
@@ -79,7 +79,9 @@ Add "rolearn" Lambda execution role using kubectl
 ```
 kubectl -n kube-system edit configmap/aws-auth
 ```
-Replace "arn:aws:iam::*:role/eks-codesuite-demo-Pipeline-CodePipelineLambdaRole-*" below with "LambdaRoleArn" from output of CloudFormation script "eks-codesuite-demo-Pipeline-*"
+Replace "arn:aws:iam::*:role/eks-codesuite-demo-Pipeline-CodePipelineLambdaRole-*" below with "LambdaRoleArn" from output of CloudFormation script "eks-codesuite-demo-Pipeline-*"  
+
+Note: You need to add the second "rolearn" structure as there will be only one "rolearn" initially
 ```
 apiVersion: v1
 data:
@@ -99,11 +101,11 @@ data:
 You will need to ssh into the AWS EC2 Instance you created above. This is a step by step process.  
 
 ### Install Credential Helper
-git config --global credential.helper '!aws codecommit credential-helper $@'
+git config --global credential.helper '!aws codecommit credential-helper $@'  
 git config --global credential.UseHttpPath true
 
 ### AWS CodeCommit Console
-Locate "eks-codesuite-demo" under "Repositories"
+Locate "eks-codesuite-demo" under "Repositories"  
 Click on "HTTPS" under "Clone URL" 
 
 ### Clone Repo and Update Code Base
@@ -148,11 +150,11 @@ Before proceeding be sure you delete deployment,service codesuite-demo as instru
 script to fail.
 
 ### AWS ECR Console
-Select ```eks-c-repos-*```
+Select ```eks-c-repos-*```  
 Click on "Delete" Button
 
 ### AWS S3 Console
-Select ```eks-codesuite-demo-pipeline-*-artifactbucket-*```
+Select ```eks-codesuite-demo-pipeline-*-artifactbucket-*```  
 Click on "Delete" Button
 
 ### AWS CloudFormation
