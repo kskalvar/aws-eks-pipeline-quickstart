@@ -1,6 +1,8 @@
 AWS Elastic Kubernetes Service (EKS) CI/CD Pipeline QuickStart  
 ===============================================
 
+For anyone who's looked at AWS CodeStar you’ve probably come away a little underwhelmed.  Not that it doesn’t do what it's supposed to do it's just too simple.  Pipelines I would be interested in would be a little more sophisticated and integrate with a maybe a Kubernetes Cluster.  So when I ran into a AWS Code Pipeline Reference Architecture that did exactly that I definitely thought it was worth a look.
+
 This solution shows you how to create an AWS EKS Cluster CI/CD Pipeline and deploy a simple web application with an external Load Balancer. This readme updates an article "CodeSuite - Continuous Deployment Reference Architecture for Kubernetes" referenced below and provides a more basic step by step process.  
 
 Steps:  
@@ -42,7 +44,7 @@ kubectl get svc codesuite-demo -o wide
 ```
 Wait till you see "EXTERNAL-IP ```*.<region>.elb.amazon.com```" 
 
-### Test from browser
+### Test from Browser
 Using your client-side browser enter the following URL
 ```
 http://<EXTERNAL-IP>
@@ -133,7 +135,7 @@ git add . && git commit -m "test CodeSuite" && git push origin master
 Click on ```eks-codesuite-demo-Pipeline-*-Pipeline-*``` under Pipelines  
 You should be able to watch your codePipeline execute
 
-### Test Deployment from browser
+### Test Deployment from Browser
 Using your client-side browser enter the following URL
 ```
 http://<EXTERNAL-IP>
