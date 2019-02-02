@@ -22,7 +22,6 @@ https://github.com/kskalvar/aws-eks-pipeline-quickstart
 ```
 
 ## Checkout aws-kube-codesuite from the aws-samples github
-
 You will need to ssh into the AWS EC2 Instance you created above.  This is a step by step process.  
 
 On the instance you have kubectl configured, checkout the codesuite repo from github.  
@@ -42,16 +41,22 @@ Capture EXTERNAL-IP for use below
 ```
 kubectl get svc codesuite-demo -o wide
 ```
-Wait till you see "EXTERNAL-IP ```*.<region>.elb.amazon.com```" 
+Wait till you see an "EXTERNAL-IP "*.<region>.elb.amazon.com" 
 
 ### Test from Browser
 Using your client-side browser enter the following URL
 ```
 http://<EXTERNAL-IP>
 ```
-## Use AWS CloudFormation to Create the CI/CD Pipeline
 
-Please note, there is an issue with the CodeSuite Reference Architecture which allows it to only be built in the us-west-2 region currently.  The issue has been added to the github Issues "Deploy Fails #12" but as of 2019-01-28 it has not been fixed.  I did identify a work-around which allows it to work in the us-east-1 region.  That work-around is incorporated in this README.md.
+## Use AWS CloudFormation to Create the CI/CD Pipeline
+```
+Note:  There is an issue with the CodeSuite Reference Architecture reference below which allows
+       it to only be built in the us-west-2 region currently.  The issue has been added to the
+       github Issues "Deploy Fails #12" but as of 2019-01-28 it has not been fixed.  I did identify
+       a work-around which allows it to work in all regions.  That work-around is incorporated in
+       this README.md.
+```
 
 ### AWS CloudFormation Console
 Click on "Create Stack"  
@@ -68,15 +73,16 @@ Click on "Next"
 Click on "Next"  
 Select Check Box "I acknowledge that AWS CloudFormation might create IAM resources with custom names"  
 Select Check Box "I acknowledge that AWS CloudFormation might require the following capability: CAPABILITY_AUTO_EXPAND"  
-Click on "Create"
+Click on "Create"  
 
+
+Wait for Status CREATE_COMPLETE before proceeding  
 
 ## Give Lambda Execution Role Permissions in Amazon EKS Cluster
 You will need to ssh into the AWS EC2 Instance you created above. This is a step by step process.
 
 
 ### Configure configmap/aws-auth
-
 Add "rolearn" Lambda execution role using kubectl
 ```
 kubectl -n kube-system edit configmap/aws-auth
@@ -132,7 +138,7 @@ git add . && git commit -m "test CodeSuite" && git push origin master
 ```
 
 ### AWS CodePipeline Console
-Click on ```eks-codesuite-demo-Pipeline-*-Pipeline-*``` under Pipelines  
+Click on "eks-codesuite-demo-Pipeline-*-Pipeline-*" under Pipelines  
 You should be able to watch your codePipeline execute
 
 ### Test Deployment from Browser
@@ -152,17 +158,16 @@ Before proceeding be sure you delete deployment,service codesuite-demo as instru
 script to fail.
 
 ### AWS ECR Console
-Select ```eks-c-repos-*```  
+Select "eks-c-repos-*"  
 Click on "Delete" Button
 
 ### AWS S3 Console
-Select ```eks-codesuite-demo-pipeline-*-artifactbucket-*```  
+Select "eks-codesuite-demo-pipeline-*-artifactbucket-*"  
 Click on "Delete" Button
 
 ### AWS CloudFormation
 Delete "eks-codesuite-demo" Stack  
 Wait for "eks-codesuite-demo" to be deleted before proceeding
-
 
 ## References
 AWS Elastic Kubernetes Service (EKS) QuickStart  
