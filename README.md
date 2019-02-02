@@ -62,7 +62,7 @@ https://s3.amazonaws.com/998551034662-aws-eks-codesuite/aws-refarch-codesuite-ku
 Click on "Next"  
 ```
 Stack name: eks-codesuite-demo
-The name of your EKS cluster: eks-cluster
+ClusterName: eks-cluster
 ```
 Click on "Next"  
 Click on "Next"  
