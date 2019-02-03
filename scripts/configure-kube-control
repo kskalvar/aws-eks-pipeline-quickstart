@@ -1,0 +1,8 @@
+# This is a stupid script. Use at your own risk. But if you followed the installation instructions to the letter it should make the config process fast.
+# This will use aws cli to populate .kube/aws-auth-cm.yaml with the correct parameters
+
+arn=`aws iam list-roles  --query Roles[].[Arn] --output text | grep eks-codesuite-demo-Pipeline-CodePipelineLambdaRole`
+
+cd $HOME/.kube
+cp ~/aws-eks-pipeline-quickstart/kube-config/aws-auth-cm.yaml.txt . 
+sed "s|myarn|${arn}|" aws-auth-cm.yaml.txt >> aws-auth-cm.yaml

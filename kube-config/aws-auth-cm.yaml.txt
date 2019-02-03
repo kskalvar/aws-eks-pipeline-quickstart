@@ -1,0 +1,4 @@
+    - rolearn: myarn
+      username: admin
+      groups:
+        - system:masters
