@@ -54,8 +54,8 @@ http://<EXTERNAL-IP>
 Copy the deployment artifacts from the project deployment directory to an S3 Bucket  
 
 ### AWS S3 Console
-Create a new bucket with a combination of your "AWS Account Id" and "aws-eks-codesuite". Example: "998551034662-aws-eks-codesuite"  
-This should provide you with a unique bucket name since S3 is a global service
+Create a new bucket with a combination of your "AWS Account Id" and "aws-eks-codesuite".  
+Example: "998551034662-aws-eks-codesuite".  This should provide you with a unique bucket name since S3 is a global service  
 
 Click on "Create bucket"
 ```
