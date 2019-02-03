@@ -9,11 +9,12 @@ Steps:
   Create your Amazon EKS Cluster  
   Checkout aws-kube-codesuite from the aws-samples github  
   Deploy the Initial Application  
+  Create S3 Deployment Bucket   
   Use AWS CloudFormation to Create the CI/CD Pipeline  
   Give Lambda Execution Role Permissions in Amazon EKS Cluster  
   Test CI/CD Pipeline  
   Remove CI/CD Pipeline  
-
+  
 
 ## Create your Amazon EKS Cluster
 This assumes you already have a EKS Cluster up and running with kubectl configured.  Please see "AWS Elastic Kubernetes Service (EKS) Pipeline QuickStart" link below for setting up a cluster.    
@@ -30,7 +31,7 @@ git clone https://github.com/aws-samples/aws-kube-codesuite
 ```
 
 ## Deploy the Initial Application
-Deploy the nginx default container application to the EKS Cluster
+Deploy the application to the EKS Cluster
 ```
 cd aws-kube-codesuite
 kubectl apply -f ./kube-manifests/deploy-first.yml
@@ -49,7 +50,27 @@ Using your client-side browser enter the following URL
 http://<EXTERNAL-IP>
 ```
 
+## Create S3 Deployment Bucket
+Copy the deployment artifacts from the project deployment directory to an S3 Bucket  
+
+### AWS S3 Console
+Create a new bucket with a combination of your "AWS Account Id" and "aws-eks-codesuite". Example: "998551034662-aws-eks-codesuite"  
+This should provide you with a unique bucket name since S3 is a global service
+
+Click on "Create bucket"
+```
+Bucket name: <Your AWS Account Id>-aws-eks-codesuite
+Region: US East(N.Virginia)
+```
+Next  
+Next  
+Next  
+Create bucket  
+
+Once your bucket is created upload all the files located in the "aws-eks-pipeline-quickstart/deployment" directory to the bucket.
+
 ## Use AWS CloudFormation to Create the CI/CD Pipeline
+Create the CI/CD Pipeline using the CloudFormation
 ```
 Note:  There is an issue with the CodeSuite Reference Architecture reference below which allows
        it to only be built in the us-west-2 region currently.  The issue has been added to the
@@ -62,7 +83,7 @@ Note:  There is an issue with the CodeSuite Reference Architecture reference bel
 Click on "Create Stack"  
 Select "Specify an Amazon S3 template URL"  
 ```
-https://s3.amazonaws.com/998551034662-aws-eks-codesuite/aws-refarch-codesuite-kubernetes.yaml
+https://s3.amazonaws.com/<Your AWS Account Id>-aws-eks-codesuite/aws-refarch-codesuite-kubernetes.yaml
 ```
 Click on "Next"  
 ```
@@ -139,7 +160,7 @@ git add . && git commit -m "test CodeSuite" && git push origin master
 
 ### AWS CodePipeline Console
 Click on "eks-codesuite-demo-Pipeline-*-Pipeline-*" under Pipelines  
-You should be able to watch your codePipeline execute
+You should be able to watch your codePipeline execute.  Please note you might see a "Failed" Source execution initially. Ignore it.
 
 ### Test Deployment from Browser
 Using your client-side browser enter the following URL
