@@ -7,4 +7,10 @@ arn=`aws iam list-roles  --query Roles[].[Arn] --output text | grep eks-codesuit
 
 cd $HOME/.kube
 cp ~/aws-eks-pipeline-quickstart/kube-config/aws-auth-pipeline.yaml.txt . 
-sed "s|myarn|${arn}|" aws-auth-pipeline.yaml.txtt >> aws-auth-cm.yaml
+sed "s|myarn|${arn}|" aws-auth-pipeline.yaml.txt >> aws-auth-cm.yaml
+
+kubectl apply -f ~/.kube/aws-auth-cm.yaml
+
+# GitHub credentials
+git config --global credential.helper '!aws codecommit credential-helper $@'
+git config --global credential.UseHttpPath true
