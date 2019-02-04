@@ -99,7 +99,7 @@ Click on "Create"
 
 Wait for Status CREATE_COMPLETE before proceeding
 
-## Give Lambda Execution Role Permissions in Amazon EKS Cluster and Add git credential.helper
+## Give Lambda Execution Role Permissions in Amazon EKS Cluster and Add git Credential Helper
 You will need to ssh into the AWS EC2 Instance you created above. This is a step by step process.
 ```
 NOTE:  There is a script in /home/ec2-user/aws-eks-pipeline-quickstart/scripts called "configure-aws-auth-pipeline".  
