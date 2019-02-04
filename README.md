@@ -22,7 +22,7 @@ This assumes you already have a EKS Cluster up and running with kubectl configur
 https://github.com/kskalvar/aws-eks-pipeline-quickstart  
 ```
 
-## Checkout aws-kube-codesuite from the aws-samples github
+## Checkout aws-kube-codesuite from github
 You will need to ssh into the AWS EC2 Instance you created above.  This is a step by step process.  
 
 On the instance you have kubectl configured, checkout the codesuite repo from github.  
@@ -97,7 +97,15 @@ Select Check Box "I acknowledge that AWS CloudFormation might require the follow
 Click on "Create"  
 
 
-Wait for Status CREATE_COMPLETE before proceeding  
+Wait for Status CREATE_COMPLETE before proceeding
+
+## Checkout aws-eks-pipeline-quickstart from github
+You will need to ssh into the AWS EC2 Instance you created above.  This is a step by step process.  
+
+On the instance you have kubectl configured, checkout the pipeline quickstart repo from github.  
+```
+git clone https://github.com/kskalvar/aws-eks-pipeline-quickstart
+```
 
 ## Give Lambda Execution Role Permissions in Amazon EKS Cluster
 You will need to ssh into the AWS EC2 Instance you created above. This is a step by step process.
@@ -110,7 +118,8 @@ kubectl -n kube-system edit configmap/aws-auth
 ```
 Replace "arn:aws:iam::*:role/eks-codesuite-demo-Pipeline-CodePipelineLambdaRole-*" below with "LambdaRoleArn" from output of CloudFormation script "eks-codesuite-demo-Pipeline-*"  
 
-Note: You need to add the second "rolearn" structure as there will be only one "rolearn" initially
+Note: You need to add a second "rolearn" structure as there will be only one "rolearn" initially.  Be sure it's the second one,  
+      as they appear similar.
 ```
 apiVersion: v1
 data:
@@ -125,13 +134,13 @@ data:
       groups:
         - system:masters
 ```
-
-## Test CI/CD Pipeline
-You will need to ssh into the AWS EC2 Instance you created above. This is a step by step process.  
-
 ### Install Credential Helper
 git config --global credential.helper '!aws codecommit credential-helper $@'  
 git config --global credential.UseHttpPath true
+
+
+## Test CI/CD Pipeline
+You will need to ssh into the AWS EC2 Instance you created above. This is a step by step process.  
 
 ### AWS CodeCommit Console
 Locate "eks-codesuite-demo" under "Repositories"  
@@ -141,20 +150,13 @@ Click on "HTTPS" under "Clone URL"
 Copy the sample-app to your new clone CodeCommit Repo
 ```
 git clone https://git-codecommit.us-east-1.amazonaws.com/v1/repos/eks-codesuite-demo
-cp aws-kube-codesuite/sample-app/* eks-codesuite-demo/
+cp aws-eks-pipeline-quickstart/sample-app/* eks-codesuite-demo/
 ```
-### Modify Dockerfile AWS_DEFAULT_REGION
-Dockerfile still references "us-west-2" so change to "us-east-1"
-```
-cd eks-codesuite-demo
-```
-edit Dockerfile
-```
-ENV AWS_DEFAULT_REGION us-east-1
-```
+
 ### Push Changes to CodeCommit Repo
 Use git to push code changes to the repo
 ```
+cd eks-codesuite-demo
 git add . && git commit -m "test CodeSuite" && git push origin master
 ```
 
@@ -186,7 +188,7 @@ Click on "Delete" Button
 Select "eks-codesuite-demo-pipeline-*-artifactbucket-*"  
 Click on "Delete" Button
 
-### AWS CloudFormation
+### AWS CloudFormation Console
 Delete "eks-codesuite-demo" Stack  
 Wait for "eks-codesuite-demo" to be deleted before proceeding
 
