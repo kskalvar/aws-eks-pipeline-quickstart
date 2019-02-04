@@ -22,18 +22,18 @@ This assumes you already have a EKS Cluster up and running with kubectl configur
 https://github.com/kskalvar/aws-eks-pipeline-quickstart  
 ```
 
-## Checkout aws-kube-codesuite from github
+## Checkout aws-eks-pipeline-quickstart from github
 You will need to ssh into the AWS EC2 Instance you created above.  This is a step by step process.  
 
 On the instance you have kubectl configured, checkout the codesuite repo from github.  
 ```
-git clone https://github.com/aws-samples/aws-kube-codesuite
+git clone https://github.com/kskalvar/aws-eks-pipeline-quickstart
 ```
 
 ## Deploy the Initial Application
 Deploy the application to the EKS Cluster
 ```
-cd aws-kube-codesuite
+cd aws-eks-pipeline-quickstart
 kubectl apply -f ./kube-manifests/deploy-first.yml
 ```
 
@@ -72,10 +72,10 @@ Once your bucket is created upload all the files located in the "aws-eks-pipelin
 ## Use AWS CloudFormation to Create the CI/CD Pipeline
 Create the CI/CD Pipeline using the CloudFormation
 ```
-Note:  There is an issue with the CodeSuite Reference Architecture reference below which allows
+Note:  There is an issue with the CodeSuite Reference Architecture reference which allows
        it to only be built in the us-west-2 region currently.  The issue has been added to the
        github Issues "Deploy Fails #12" but as of 2019-01-28 it has not been fixed.  I did identify
-       a work-around which allows it to work in all regions.  That work-around is incorporated in
+       a work-around which allows it to deployed in all regions.  That work-around is incorporated in
        this README.md.
 ```
 
@@ -99,17 +99,21 @@ Click on "Create"
 
 Wait for Status CREATE_COMPLETE before proceeding
 
-## Checkout aws-eks-pipeline-quickstart from github
-You will need to ssh into the AWS EC2 Instance you created above.  This is a step by step process.  
-
-On the instance you have kubectl configured, checkout the pipeline quickstart repo from github.  
-```
-git clone https://github.com/kskalvar/aws-eks-pipeline-quickstart
-```
-
-## Give Lambda Execution Role Permissions in Amazon EKS Cluster
+## Give Lambda Execution Role Permissions in Amazon EKS Cluster and Add git credential.helper
 You will need to ssh into the AWS EC2 Instance you created above. This is a step by step process.
+```
+NOTE:  There is a script in /home/ec2-user/aws-eks-pipeline-quickstart/scripts called "configure-aws-auth-pipeline".  
+       You may run this script to automate the creation and population of environment 
+       variable in .kube/aws-auth-cm.yaml for the pipeline.  It uses the naming convention
+       I specified in this HOW-TO.  So if you didn't use the naming convention it won't work.
+       If you do use the script then all you need to do is continue to the "Test CI/CD Pipeline" step.
 
+To Run the Script:
+
+cp ~/aws-eks-pipeline-quickstart/scripts/configure-aws-auth-pipeline .
+chmod u+x configure-aws-auth-pipeline
+./configure-aws-auth-pipeline
+```
 
 ### Configure configmap/aws-auth
 Add "rolearn" Lambda execution role using kubectl
@@ -118,7 +122,7 @@ kubectl -n kube-system edit configmap/aws-auth
 ```
 Replace "arn:aws:iam::*:role/eks-codesuite-demo-Pipeline-CodePipelineLambdaRole-*" below with "LambdaRoleArn" from output of CloudFormation script "eks-codesuite-demo-Pipeline-*"  
 
-Note: You need to add a second "rolearn" structure as there will be only one "rolearn" initially.  Be sure it's the second one,  
+Note: You need to add a second "rolearn" structure as there will be only one "rolearn" initially.  Be sure to add the second one only,  
       as they appear similar.
 ```
 apiVersion: v1
