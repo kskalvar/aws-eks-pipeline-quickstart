@@ -7,9 +7,10 @@ Steps:
   Create your Amazon EKS Cluster  
   Checkout aws-eks-pipeline-quickstart from github  
   Deploy the Initial Application  
-  Create S3 Deployment Bucket (AWS CloudFormation Templates + Code for Pipeline)  
+  Create S3 Bucket and Upload Deployment Artifacts  
   Use AWS CloudFormation to Create the CI/CD Pipeline  
   Give Lambda Execution Role Permissions in Amazon EKS Cluster  
+  Add git Credential Helper to Development Environment  
   Test CI/CD Pipeline  
   Remove CI/CD Pipeline  
   
@@ -48,7 +49,7 @@ Using your client-side browser enter the following URL
 http://<EXTERNAL-IP>
 ```
 
-## Create S3 Deployment Bucket
+## Create S3 Bucket and Upload Deployment Artifacts
 Copy the deployment artifacts from the project deployment directory to an S3 Bucket  
 
 ### AWS S3 Console
@@ -101,7 +102,7 @@ Wait for Status CREATE_COMPLETE before proceeding
 You will need to ssh into the AWS EC2 Instance you created above. This is a step by step process.
 ```
 NOTE:  There is a script in /home/ec2-user/aws-eks-pipeline-quickstart/scripts called "configure-aws-auth-pipeline".  
-       You may run this script to automate adding a rolearn in .kube/aws-auth-cm.yaml for the pipeline.
+       You may run this script to automate adding a rolearn to .kube/aws-auth-cm.yaml for the pipeline.
        This script uses the naming convention I specified in this HOW-TO.  So if you didn't use the naming convention
        it won't work.  If you do use the script then all you need to do is continue to the "Test CI/CD Pipeline" step.
 
@@ -135,7 +136,7 @@ data:
       groups:
         - system:masters
 ```
-### Install Credential Helper
+## Add git Credential Helper to Development Environment
 git config --global credential.helper '!aws codecommit credential-helper $@'  
 git config --global credential.UseHttpPath true
 
