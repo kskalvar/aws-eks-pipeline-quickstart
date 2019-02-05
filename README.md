@@ -5,7 +5,7 @@ This solution shows you how to create an AWS EKS Cluster CI/CD Pipeline and depl
 
 Steps:  
   Create your Amazon EKS Cluster  
-  Checkout aws-kube-codesuite from the aws-samples github  
+  Checkout aws-eks-pipeline-quickstart from github  
   Deploy the Initial Application  
   Create S3 Deployment Bucket (AWS CloudFormation Templates + Code for Pipeline)  
   Use AWS CloudFormation to Create the CI/CD Pipeline  
