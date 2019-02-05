@@ -9,7 +9,7 @@ Steps:
   Create your Amazon EKS Cluster  
   Checkout aws-kube-codesuite from the aws-samples github  
   Deploy the Initial Application  
-  Create S3 Deployment Bucket   
+  Create S3 Deployment Bucket (AWS CloudFormation Templates + Code for Pipeline)  
   Use AWS CloudFormation to Create the CI/CD Pipeline  
   Give Lambda Execution Role Permissions in Amazon EKS Cluster  
   Test CI/CD Pipeline  
@@ -99,14 +99,13 @@ Click on "Create"
 
 Wait for Status CREATE_COMPLETE before proceeding
 
-## Give Lambda Execution Role Permissions in Amazon EKS Cluster and Add git Credential Helper
+## Give Lambda Execution Role in Amazon EKS Cluster
 You will need to ssh into the AWS EC2 Instance you created above. This is a step by step process.
 ```
 NOTE:  There is a script in /home/ec2-user/aws-eks-pipeline-quickstart/scripts called "configure-aws-auth-pipeline".  
-       You may run this script to automate the creation and population of environment 
-       variable in .kube/aws-auth-cm.yaml for the pipeline.  It uses the naming convention
-       I specified in this HOW-TO.  So if you didn't use the naming convention it won't work.
-       If you do use the script then all you need to do is continue to the "Test CI/CD Pipeline" step.
+       You may run this script to automate adding a rolearn in .kube/aws-auth-cm.yaml for the pipeline.
+       This script uses the naming convention I specified in this HOW-TO.  So if you didn't use the naming convention
+       it won't work.  If you do use the script then all you need to do is continue to the "Test CI/CD Pipeline" step.
 
 To Run the Script:
 
