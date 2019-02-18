@@ -121,8 +121,8 @@ kubectl -n kube-system edit configmap/aws-auth
 Replace "arn:aws:iam::*:role/eks-codesuite-demo-Pipeline-CodePipelineLambdaRole-*" below with "LambdaRoleArn" from output of CloudFormation script "eks-codesuite-demo-Pipeline-*"
 ```  
 
-Note: You need to add a second "rolearn" structure as there will be only one "rolearn" initially.  Be sure to add the second one only,  
-      as they appear similar.
+Note: You need to add a second "rolearn" structure as there will be only one "rolearn" initially.  Be sure to add
+      the second one only, as they appear similar.
 ```
 apiVersion: v1
 data:
