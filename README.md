@@ -117,8 +117,9 @@ chmod u+x configure-aws-auth-pipeline
 Add "rolearn" Lambda execution role using kubectl
 ```
 kubectl -n kube-system edit configmap/aws-auth
-```
-Replace "arn:aws:iam::*:role/eks-codesuite-demo-Pipeline-CodePipelineLambdaRole-*" below with "LambdaRoleArn" from output of CloudFormation script "eks-codesuite-demo-Pipeline-*"  
+
+Replace "arn:aws:iam::*:role/eks-codesuite-demo-Pipeline-CodePipelineLambdaRole-*" below with "LambdaRoleArn" from output of CloudFormation script "eks-codesuite-demo-Pipeline-*"
+```  
 
 Note: You need to add a second "rolearn" structure as there will be only one "rolearn" initially.  Be sure to add the second one only,  
       as they appear similar.
