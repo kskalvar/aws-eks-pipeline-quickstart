@@ -196,7 +196,11 @@ Click on "Delete" Button
 
 ### AWS CloudFormation Console
 Delete "eks-codesuite-demo" Stack  
-Wait for "eks-codesuite-demo" to be deleted before proceeding
+Wait for "eks-codesuite-demo" to be deleted before proceeding  
+
+### AWS S3 Console
+Select "eks-codesuite-demo-lambdacopy-*-localbucket-*"  
+Click on "Delete" Button
 
 ## References
 AWS Elastic Kubernetes Service (EKS) QuickStart  
