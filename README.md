@@ -161,6 +161,7 @@ cp aws-eks-pipeline-quickstart/sample-app/* eks-codesuite-demo/
 ### Push Changes to CodeCommit Repo
 Use git to push code changes to the repo
 ```
+cd ~
 cd eks-codesuite-demo
 git add . && git commit -m "test CodeSuite" && git push origin master
 ```
