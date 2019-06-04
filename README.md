@@ -108,6 +108,7 @@ NOTE:  There is a script in /home/ec2-user/aws-eks-pipeline-quickstart/scripts c
 
 To Run the Script:
 
+cd ~
 cp ~/aws-eks-pipeline-quickstart/scripts/configure-aws-auth-pipeline .
 chmod u+x configure-aws-auth-pipeline
 ./configure-aws-auth-pipeline
