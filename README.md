@@ -153,6 +153,7 @@ Click on "HTTPS" under "Clone URL"
 ### Clone Repo and Update Code Base
 Copy the sample-app to your new clone CodeCommit Repo
 ```
+cd ~
 git clone https://git-codecommit.us-east-1.amazonaws.com/v1/repos/eks-codesuite-demo
 cp aws-eks-pipeline-quickstart/sample-app/* eks-codesuite-demo/
 ```
