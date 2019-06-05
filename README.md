@@ -74,7 +74,7 @@ Create the CI/CD Pipeline using the CloudFormation
 Note:  There is an issue with the CodeSuite Reference Architecture reference which allows
        it to only be built in the us-west-2 region currently.  The issue has been added to the
        github Issues "Deploy Fails #12" but as of 2019-01-28 it has not been fixed.  I did identify
-       a work-around which allows it to deployed in all regions.  That work-around is incorporated in
+       a work-around which allows it to be deployed in all regions.  That work-around is incorporated in
        this README.md.
 ```
 
@@ -179,7 +179,8 @@ http://<EXTERNAL-IP>
 ### Delete Deployment, Service
 Use kubectl to delete application
 ```
-kubectl delete deployment,service codesuite-demo
+cd aws-eks-pipeline-quickstart
+kubectl apply -f ./kube-manifests/deploy-first.yml
 ```
 
 ## Remove CI/CD Pipeline
