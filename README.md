@@ -26,12 +26,14 @@ You will need to ssh into the AWS EC2 Instance you created when you setup your c
 
 On the instance you have kubectl configured, checkout the codesuite repo from github.  
 ```
+cd ~
 git clone https://github.com/kskalvar/aws-eks-pipeline-quickstart
 ```
 
 ## Deploy the Initial Application
 Deploy the application to the EKS Cluster
 ```
+cd ~
 cd aws-eks-pipeline-quickstart
 kubectl apply -f ./kube-manifests/deploy-first.yml
 ```
