@@ -22,7 +22,7 @@ https://github.com/kskalvar/aws-eks-pipeline-quickstart
 ```
 
 ## Checkout aws-eks-pipeline-quickstart from github
-You will need to ssh into the AWS EC2 Instance you created above.  This is a step by step process.  
+You will need to ssh into the AWS EC2 Instance you created when you setup your cluster.  This is a step by step process.  
 
 On the instance you have kubectl configured, checkout the codesuite repo from github.  
 ```
@@ -54,7 +54,11 @@ Copy the deployment artifacts from the project deployment directory to an S3 Buc
 
 ### AWS S3 Console
 Create a new bucket with a combination of your "AWS Account Id" and "aws-eks-codesuite".  
-Example: "998551034662-aws-eks-codesuite".  This should provide you with a unique bucket name since S3 is a global service  
+
+  Example: "998551034662-aws-eks-codesuite".  
+  
+This should provide you with a unique bucket name since S3 is a global service.  Be sure to use  
+the naming convention as in the example above as the CloudFormation scripts work based on that naming convention.  
 
 Click on "Create bucket"
 ```
@@ -71,7 +75,7 @@ Once your bucket is created upload all the files located in the "aws-eks-pipelin
 ## Use AWS CloudFormation to Create the CI/CD Pipeline
 Create the CI/CD Pipeline using the CloudFormation
 ```
-Note:  There is an issue with the CodeSuite Reference Architecture reference which allows
+Note:  There is an issue with the CodeSuite Reference Architecture which allows
        it to only be built in the us-west-2 region currently.  The issue has been added to the
        github Issues "Deploy Fails #12" but as of 2019-01-28 it has not been fixed.  I did identify
        a work-around which allows it to be deployed in all regions.  That work-around is incorporated in
@@ -82,7 +86,7 @@ Note:  There is an issue with the CodeSuite Reference Architecture reference whi
 Click on "Create Stack"  
 Select "Specify an Amazon S3 template URL"  
 ```
-https://s3.amazonaws.com/<Your AWS Account Id>-aws-eks-codesuite/aws-refarch-codesuite-kubernetes.yaml
+https://<Your AWS Account Id>-aws-eks-codesuite.s3.amazonaws.com/aws-refarch-codesuite-kubernetes.yaml
 ```
 Click on "Next"  
 ```
@@ -99,12 +103,14 @@ Click on "Create"
 Wait for Status CREATE_COMPLETE before proceeding
 
 ## Give Lambda Execution Role in Amazon EKS Cluster
-You will need to ssh into the AWS EC2 Instance you created above. This is a step by step process.
+You will need to ssh into the AWS EC2 Instance you created when you setup your cluster. This is a step by step process.
 ```
-NOTE:  There is a script in /home/ec2-user/aws-eks-pipeline-quickstart/scripts called "configure-aws-auth-pipeline".  
-       You may run this script to automate adding a rolearn to .kube/aws-auth-cm.yaml for the pipeline.
-       This script uses the naming convention I specified in this HOW-TO.  So if you didn't use the naming convention
-       it won't work.  If you do use the script then all you need to do is continue to the "Test CI/CD Pipeline" step.
+NOTE:  There is a script in /home/ec2-user/aws-eks-pipeline-quickstart/scripts called
+       "configure-aws-auth-pipeline". You may run this script to automate adding a rolearn
+       to .kube/aws-auth-cm.yaml for the pipeline.  This script uses the naming convention
+       I specified in this HOW-TO.  So if you didn't use the naming convention it won't work.
+       If you do use the script then all you need to do is continue to the "Test CI/CD Pipeline" step.
+       This script will also setup your GitHub credentials for CodeCommit repo.
 
 To Run the Script:
 
@@ -179,8 +185,9 @@ http://<EXTERNAL-IP>
 ### Delete Deployment, Service
 Use kubectl to delete application
 ```
+cd ~
 cd aws-eks-pipeline-quickstart
-kubectl apply -f ./kube-manifests/deploy-first.yml
+kubectl delete -f ./kube-manifests/deploy-first.yml
 ```
 
 ## Remove CI/CD Pipeline
